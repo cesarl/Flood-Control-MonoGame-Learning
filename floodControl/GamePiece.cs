@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -126,6 +127,32 @@ namespace floodControl
 			case "Empty":
 				break;
 			}
+		}
+
+		public string[] GetOtherEnds(string startingEnd)
+		{
+			List<string> opposites = new List<string>();
+			foreach (string end in type_.Split(','))
+			{
+				if (end != startingEnd)
+					opposites.Add(end);
+			}
+			return opposites.ToArray(); 
+		}
+
+		public bool HasConnector(string direction)
+		{
+			return type_.Contains(direction);
+		}
+
+		public Rectangle GetRect()
+		{
+			int x = offsetX;
+			int y = offsetY;
+			if (suffix_.Contains("W"))
+				x += w + paddingX;
+			y += (Array.IndexOf(pieceTypes, type_) * h + paddingY);
+			return new Rectangle(x, y, w, h); 
 		}
 	}
 }
