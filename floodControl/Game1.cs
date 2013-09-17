@@ -1,5 +1,6 @@
 #region Using Statements
 using System;
+using System.Diagnostics;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -22,10 +23,10 @@ namespace floodControl
 		Texture2D titleScreen;
 
 		GameBoard board;
-		Vector2 gameBoardDisplayOrigin = new Vector2(70, 89);
+		Vector2 gameBoardDisplayOrigin = new Vector2(0, 0);
 		int playerScore = 0;
 		enum gameState {TitleScreen, Playing};
-		gameState state = gameState.TitleScreen;
+		gameState state = gameState.Playing;
 		Rectangle emptyPiece = new Rectangle(1, 247, 40, 40);
 		const float minTimeSunceLastInput = 0.25f;
 		float timeSinceLastInput = 0.0f;
@@ -33,8 +34,11 @@ namespace floodControl
 		public Game1 ()
 		{
 			graphics = new GraphicsDeviceManager (this);
-			Content.RootDirectory = "Content";	            
-			graphics.IsFullScreen = false;		
+			Content.RootDirectory = "Content";
+			this.graphics.PreferredBackBufferWidth = 800;
+			this.graphics.PreferredBackBufferHeight = 600;
+			graphics.IsFullScreen = false;
+			this.graphics.ApplyChanges();
 		}
 
 		/// <summary>
@@ -45,14 +49,9 @@ namespace floodControl
 		/// </summary>
 		protected override void Initialize ()
 		{
-			// TODO: Add your initialization logic here
-			base.Initialize ();
-
-			IsMouseVisible = true;
-			graphics.PreferredBackBufferWidth = 800;
-			graphics.PreferredBackBufferHeight = 600;
-			graphics.ApplyChanges();
+			//IsMouseVisible = true;
 			board = new GameBoard();
+			base.Initialize ();
 		}
 
 		/// <summary>
@@ -82,6 +81,7 @@ namespace floodControl
 			if (GamePad.GetState (PlayerIndex.One).Buttons.Back == ButtonState.Pressed) {
 				Exit ();
 			}
+
 			// TODO: Add your update logic here			
 			base.Update (gameTime);
 		}
@@ -92,11 +92,33 @@ namespace floodControl
 		/// <param name="gameTime">Provides a snapshot of timing values.</param>
 		protected override void Draw (GameTime gameTime)
 		{
-			graphics.GraphicsDevice.Clear (Color.CornflowerBlue);
-		
-			//TODO: Add your drawing code here
-            
-			base.Draw (gameTime);
+			graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
+			spriteBatch.Begin();
+		    if (state == gameState.TitleScreen)
+			{
+				spriteBatch.Draw(titleScreen, new Rectangle(0, 0, Window.ClientBounds.Width, Window.ClientBounds.Height), Color.White);
+			}
+			else if (state == gameState.Playing)
+			{
+				spriteBatch.Draw(backgroundScreen, new Rectangle(0, 0, Window.ClientBounds.Width, Window.ClientBounds.Height), Color.White);
+				Debug.Write("lol");
+				for (int x = 0; x < GameBoard.w; ++x)
+				{
+					for (int y = 0; y < GameBoard.h; ++y)
+					{
+						int px = (int)gameBoardDisplayOrigin.X + x * GamePiece.w;
+						int py = (int)gameBoardDisplayOrigin.Y + y * GamePiece.h;
+
+						spriteBatch.Draw(playingPieces,
+						                 new Rectangle(px, py, GamePiece.w, GamePiece.h), emptyPiece, Color.White);
+						spriteBatch.Draw(playingPieces,
+						                 new Rectangle(px, py, GamePiece.w, GamePiece.h), board.GetRect(x, y), Color.White);
+						Window.Title = playerScore.ToString();
+					}
+				}
+			}
+			spriteBatch.End();
+			base.Draw(gameTime);
 		}
 	}
 }
