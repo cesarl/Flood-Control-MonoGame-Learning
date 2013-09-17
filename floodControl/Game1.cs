@@ -21,6 +21,15 @@ namespace floodControl
 		Texture2D backgroundScreen;
 		Texture2D titleScreen;
 
+		GameBoard board;
+		Vector2 gameBoardDisplayOrigin = new Vector2(70, 89);
+		int playerScore = 0;
+		enum gameState {TitleScreen, Playing};
+		gameState state = gameState.TitleScreen;
+		Rectangle emptyPiece = new Rectangle(1, 247, 40, 40);
+		const float minTimeSunceLastInput = 0.25f;
+		float timeSinceLastInput = 0.0f;
+
 		public Game1 ()
 		{
 			graphics = new GraphicsDeviceManager (this);
@@ -38,7 +47,12 @@ namespace floodControl
 		{
 			// TODO: Add your initialization logic here
 			base.Initialize ();
-				
+
+			IsMouseVisible = true;
+			graphics.PreferredBackBufferWidth = 800;
+			graphics.PreferredBackBufferHeight = 600;
+			graphics.ApplyChanges();
+			board = new GameBoard();
 		}
 
 		/// <summary>

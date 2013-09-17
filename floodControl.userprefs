@@ -1,9 +1,10 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="floodControl/GamePiece.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="floodControl/GameBoard.cs">
     <Files>
-      <File FileName="floodControl/Game1.cs" Line="54" Column="3" />
-      <File FileName="floodControl/GamePiece.cs" Line="59" Column="3" />
+      <File FileName="floodControl/Game1.cs" Line="55" Column="9" />
+      <File FileName="floodControl/GamePiece.cs" Line="128" Column="11" />
+      <File FileName="floodControl/GameBoard.cs" Line="114" Column="19" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
