@@ -23,7 +23,7 @@ namespace floodControl
         Texture2D titleScreen;
 
         GameBoard board;
-        Vector2 gameBoardDisplayOrigin = new Vector2(70, 0);
+        Vector2 gameBoardDisplayOrigin = new Vector2(70, 89);
         int playerScore = 0;
         enum gameState { TitleScreen, Playing };
         gameState state = gameState.Playing;
