@@ -26,7 +26,7 @@ namespace floodControl
         Vector2 gameBoardDisplayOrigin = new Vector2(70, 89);
         int playerScore = 0;
         enum gameState { TitleScreen, Playing };
-        gameState state = gameState.Playing;
+        gameState state = gameState.TitleScreen;
         Rectangle emptyPiece = new Rectangle(1, 247, 40, 40);
         const float minTimeSunceLastInput = 0.25f;
         float timeSinceLastInput = 0.0f;
@@ -53,6 +53,41 @@ namespace floodControl
             // TODO: Add your initialization logic here
             board = new GameBoard();
             base.Initialize();
+        }
+
+        private int DetermineScore(int count)
+        {
+            return (int)((Math.Pow(count / 5, 2) + count) * 10);
+        }
+
+        //private void CheckScoring(List<Vector2> waterChain)
+        //{
+        //    if (waterChain.Count <= 0)
+        //        return;
+        //    Vector2 lastPipe = waterChain[waterChain.Count - 1];
+        //    if (lastPipe.X == GameBoard.w - 1)
+
+        //}
+
+
+        private void HandleMouseInput(MouseState state)
+        {
+            int x = (state.X - (int)gameBoardDisplayOrigin.X) / GamePiece.w;
+            int y = (state.Y - (int)gameBoardDisplayOrigin.Y) / GamePiece.h;
+
+            if (x < 0 || x >= GameBoard.w || y < 0 || y >= GameBoard.h)
+                return;
+            Console.Write("sdfsdfs");
+            if (state.LeftButton == ButtonState.Pressed)
+            {
+                board.RotatePiece(x, y, false);
+                timeSinceLastInput = 0.0f;
+            }
+            if (state.RightButton == ButtonState.Pressed)
+            {
+                board.RotatePiece(x, y, true);
+                timeSinceLastInput = 0.0f;
+            }
         }
 
         /// <summary>
@@ -91,6 +126,29 @@ namespace floodControl
                 Exit();
 
             // TODO: Add your update logic here
+
+            if (state == gameState.TitleScreen)
+            {
+                if (Keyboard.GetState().IsKeyDown(Keys.Space))
+                {
+                    board.ClearBoard();
+                    board.Generate(false);
+                    playerScore = 0;
+                    state = gameState.Playing;
+                }
+            }
+            else if (state == gameState.Playing)
+            {
+                timeSinceLastInput += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                if (timeSinceLastInput >= minTimeSunceLastInput)
+                {
+                    HandleMouseInput(Mouse.GetState());
+                }
+                board.ResetWater();
+                for (int y = 0; y < GameBoard.h; ++y)
+                    board.GetWaterChain(y);
+                board.Generate(false);
+            }
 
             base.Update(gameTime);
         }
