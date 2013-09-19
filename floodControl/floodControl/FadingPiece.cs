@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace floodControl
 {
-    class FadingPiece : GamePiece
+    public class FadingPiece : GamePiece
     {
         public float alphaLevel = 1.0f;
         public static float rate = 0.02f;
@@ -18,7 +18,7 @@ namespace floodControl
 
         public void Update()
         {
-            alphaLevel - MathHelper.Max(0, alphaLevel - rate);
+            alphaLevel = MathHelper.Max(0, alphaLevel - rate);
         }
     }
 }

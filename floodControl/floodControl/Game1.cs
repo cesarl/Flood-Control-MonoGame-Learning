@@ -66,7 +66,14 @@ namespace floodControl
                 return;
             Vector2 lastPipe = waterChain[waterChain.Count - 1];
             if (lastPipe.X == GameBoard.w - 1 && board.HasConnector((int)lastPipe.X, (int)lastPipe.Y, "Right"))
+            {
                 playerScore += DetermineScore(waterChain.Count);
+                foreach (Vector2 i in waterChain)
+                {
+                    board.AddFadingPiece((int)i.X, (int)i.Y, board.GetSquare((int)i.X, (int)i.Y));
+                    board.SetSquare((int)i.X, (int)i.Y, "Empty");
+                }
+            }
         }
 
 
@@ -81,11 +88,13 @@ namespace floodControl
             {
                 board.RotatePiece(x, y, false);
                 timeSinceLastInput = 0.0f;
+                board.AddRotationPiece(x, y, board.GetSquare(x, y), false);
             }
             if (state.RightButton == ButtonState.Pressed)
             {
                 board.RotatePiece(x, y, true);
                 timeSinceLastInput = 0.0f;
+                board.AddRotationPiece(x, y, board.GetSquare(x, y), true);
             }
         }
 
@@ -146,8 +155,11 @@ namespace floodControl
                 board.ResetWater();
                 playerScore = 0;
                 for (int y = 0; y < GameBoard.h; ++y)
+                {
                     CheckScoring(board.GetWaterChain(y));
+                }
                 board.Generate(false);
+                board.Update();
             }
 
             base.Update(gameTime);
@@ -175,11 +187,32 @@ namespace floodControl
                     {
                         int px = (int)gameBoardDisplayOrigin.X + x * GamePiece.w;
                         int py = (int)gameBoardDisplayOrigin.Y + y * GamePiece.h;
-
-                        spriteBatch.Draw(playingPieces,
-                                         new Rectangle(px, py, GamePiece.w, GamePiece.h), emptyPiece, Color.White);
-                        spriteBatch.Draw(playingPieces,
-                                         new Rectangle(px, py, GamePiece.w, GamePiece.h), board.GetRect(x, y), Color.White);
+                        DrawEmptyPiece(px, py);
+                        bool isDw = false;
+                        string posName = x.ToString() + "_" + y.ToString();
+                        if (board.rotating.ContainsKey(posName))
+                        {
+                            DrawRotatingPiece(px, py, posName);
+                            isDw = true;
+                        }
+                        if (board.fading.ContainsKey(posName))
+                        {
+                            DrawFadingPiece(px, py, posName);
+                            isDw = true;
+                        }
+                        if (board.falling.ContainsKey(posName))
+                        {
+                            DrawFallingPiece(px, py, posName);
+                            isDw = true;
+                        }
+                        if (!isDw)
+                        {
+                            DrawStandardPiece(x, y, px, py);
+                        }
+                        //spriteBatch.Draw(playingPieces,
+                        //                 new Rectangle(px, py, GamePiece.w, GamePiece.h), emptyPiece, Color.White);
+                        //spriteBatch.Draw(playingPieces,
+                        //                 new Rectangle(px, py, GamePiece.w, GamePiece.h), board.GetRect(x, y), Color.White);
                         Window.Title = playerScore.ToString();
                     }
                 }
@@ -187,5 +220,32 @@ namespace floodControl
             spriteBatch.End();
             base.Draw(gameTime);
         }
+
+        private void DrawEmptyPiece(int x, int y)
+        {
+            spriteBatch.Draw(playingPieces, new Rectangle(x, y, GamePiece.w, GamePiece.h), emptyPiece, Color.White);
+        }
+
+        private void DrawStandardPiece(int x, int y, int px, int py)
+        {
+            spriteBatch.Draw(playingPieces, new Rectangle(px, py, GamePiece.w, GamePiece.h), board.GetRect(x, y), Color.White);
+        }
+
+        private void DrawFallingPiece(int x, int y, string posName)
+        {
+            spriteBatch.Draw(playingPieces, new Rectangle(x, y - board.falling[posName].offset, GamePiece.w, GamePiece.h), board.falling[posName].GetRect(), Color.White);
+        }
+
+        private void DrawFadingPiece(int x, int y, string posName)
+        {
+            spriteBatch.Draw(playingPieces, new Rectangle(x, y, GamePiece.w, GamePiece.h), board.falling[posName].GetRect(), Color.White * board.fading[posName].alphaLevel);
+        }
+        
+        private void DrawRotatingPiece(int x, int y, string posName)
+        {
+            spriteBatch.Draw(playingPieces, new Rectangle(x + (GamePiece.w / 2), y + (GamePiece.h / 2), GamePiece.w, GamePiece.h), board.rotating[posName].GetRect(), Color.White, board.rotating[posName].RotationAmount, new Vector2(GamePiece.w / 2, GamePiece.h / 2), SpriteEffects.None, 0.0f);
+        }
+
+
     }
 }

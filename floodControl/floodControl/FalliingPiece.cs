@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace floodControl
 {
-    class FalliingPiece : GamePiece
+    public class FalliingPiece : GamePiece
     {
         public int offset;
         public static int fallRate = 5;

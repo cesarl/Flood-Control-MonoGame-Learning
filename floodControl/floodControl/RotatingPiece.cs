@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace floodControl
 {
-    class RotatingPiece : GamePiece
+    public class RotatingPiece : GamePiece
     {
         public bool clockwise;
         public static float rotationRate = (MathHelper.PiOver2 / 10);

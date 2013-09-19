@@ -9,8 +9,14 @@ namespace floodControl
 		Random rand = new Random();
 		public const int w = 8;
 		public const int h = 10;
+
+        public Dictionary<string, FalliingPiece> falling = new Dictionary<string, FalliingPiece>();
+        public Dictionary<string, RotatingPiece> rotating = new Dictionary<string, RotatingPiece>();
+        public Dictionary<string, FadingPiece> fading = new Dictionary<string, FadingPiece>();
+
 		private GamePiece[,] pieces_ = new GamePiece[w,h];
 		private List<Vector2> waterTracker = new List<Vector2>();
+
 
 		public GameBoard ()
 		{
@@ -67,6 +73,7 @@ namespace floodControl
 				{
 					SetSquare(x, y, GetSquare(x, row));
 					SetSquare(x, row, "Empty");
+                    AddFallingPiece(x, y, GetSquare(x, y), GamePiece.h * (y * row));
 					row = -1;
 				}
 				--row;
@@ -95,6 +102,7 @@ namespace floodControl
 					if (GetSquare(x, y) == "Empty")
 					{
 						RandomPiece(x, y);
+                        AddFallingPiece(x, y, GetSquare(x, y), GamePiece.h * GameBoard.h);
 					}
 				}
 			}
@@ -153,6 +161,65 @@ namespace floodControl
 			PropagateWater(0, y, "Left");
 			return waterTracker;
 		}
+
+        public void AddFallingPiece(int x, int y, string name, int offset)
+        {
+            falling[x.ToString() + "_" + y.ToString()] = new FalliingPiece(name, offset);
+        }
+
+        public void AddRotationPiece(int x, int y, string name, bool clockwise)
+        {
+            rotating[x.ToString() + "_" + y.ToString()] = new RotatingPiece(name, clockwise);
+        }
+
+        public void AddFadingPiece(int x, int y, string name)
+        {
+            fading[x.ToString() + "_" + y.ToString()] = new FadingPiece(name, "W");
+        }
+
+        public bool ArePieceAnimating()
+        {
+           return !(falling.Count == 0 && rotating.Count == 0 && fading.Count == 0);
+        }
+
+        public void Update()
+        {
+            Queue<string> trash1 = new Queue<string>();
+            foreach (KeyValuePair<string, FalliingPiece> entry in falling)
+            {
+                entry.Value.Update();
+                if (entry.Value.offset == 0)
+                    trash1.Enqueue(entry.Key.ToString());
+            }
+            while (trash1.Count > 0)
+            {
+                falling.Remove(trash1.Dequeue());
+            }
+
+            foreach (KeyValuePair<string, RotatingPiece> entry in rotating)
+            {
+                entry.Value.Update();
+                if (entry.Value.rotationRemaining == 0)
+                    trash1.Enqueue(entry.Key.ToString());
+            }
+            while (trash1.Count > 0)
+            {
+                rotating.Remove(trash1.Dequeue());
+            }
+
+            foreach (KeyValuePair<string, FadingPiece> entry in fading)
+            {
+                entry.Value.Update();
+                if (entry.Value.alphaLevel == 0)
+                    trash1.Enqueue(entry.Key.ToString());
+            }
+                        while (trash1.Count > 0)
+            {
+                fading.Remove(trash1.Dequeue());
+            }
+
+        }
+
 	}
 }
 
