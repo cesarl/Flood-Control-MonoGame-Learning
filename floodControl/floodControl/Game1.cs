@@ -153,7 +153,7 @@ namespace floodControl
                     HandleMouseInput(Mouse.GetState());
                 }
                 board.ResetWater();
-                playerScore = 0;
+                //playerScore = 0;
                 for (int y = 0; y < GameBoard.h; ++y)
                 {
                     CheckScoring(board.GetWaterChain(y));
@@ -209,10 +209,6 @@ namespace floodControl
                         {
                             DrawStandardPiece(x, y, px, py);
                         }
-                        //spriteBatch.Draw(playingPieces,
-                        //                 new Rectangle(px, py, GamePiece.w, GamePiece.h), emptyPiece, Color.White);
-                        //spriteBatch.Draw(playingPieces,
-                        //                 new Rectangle(px, py, GamePiece.w, GamePiece.h), board.GetRect(x, y), Color.White);
                         Window.Title = playerScore.ToString();
                     }
                 }

@@ -72,9 +72,6 @@
     <Content Include="Content\Textures\Background.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Textures\tile_sheet.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Content\Textures\Tile_Sheet.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
