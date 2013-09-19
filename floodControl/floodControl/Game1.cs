@@ -60,14 +60,14 @@ namespace floodControl
             return (int)((Math.Pow(count / 5, 2) + count) * 10);
         }
 
-        //private void CheckScoring(List<Vector2> waterChain)
-        //{
-        //    if (waterChain.Count <= 0)
-        //        return;
-        //    Vector2 lastPipe = waterChain[waterChain.Count - 1];
-        //    if (lastPipe.X == GameBoard.w - 1)
-
-        //}
+        private void CheckScoring(List<Vector2> waterChain)
+        {
+            if (waterChain.Count <= 0)
+                return;
+            Vector2 lastPipe = waterChain[waterChain.Count - 1];
+            if (lastPipe.X == GameBoard.w - 1 && board.HasConnector((int)lastPipe.X, (int)lastPipe.Y, "Right"))
+                playerScore += DetermineScore(waterChain.Count);
+        }
 
 
         private void HandleMouseInput(MouseState state)
@@ -77,7 +77,6 @@ namespace floodControl
 
             if (x < 0 || x >= GameBoard.w || y < 0 || y >= GameBoard.h)
                 return;
-            Console.Write("sdfsdfs");
             if (state.LeftButton == ButtonState.Pressed)
             {
                 board.RotatePiece(x, y, false);
@@ -145,8 +144,9 @@ namespace floodControl
                     HandleMouseInput(Mouse.GetState());
                 }
                 board.ResetWater();
+                playerScore = 0;
                 for (int y = 0; y < GameBoard.h; ++y)
-                    board.GetWaterChain(y);
+                    CheckScoring(board.GetWaterChain(y));
                 board.Generate(false);
             }
 
