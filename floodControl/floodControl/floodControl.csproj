@@ -35,6 +35,7 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="FalliingPiece.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="GameBoard.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
